@@ -1,5 +1,6 @@
 import unittest
 import sys
+import math
 from contextlib import contextmanager
 from io import StringIO
 
@@ -21,8 +22,14 @@ def captured_output():
 #################################################################################
 
 # implement this function
-def is_perfect(n):
-    pass
+def is_perfect(n):    
+    sum = 0
+
+    for x in range(1, n):
+        if n % x == 0:
+            sum += x    
+
+    return sum == n
 
 # (3 points)
 def test1():
@@ -40,7 +47,13 @@ def test1():
 
 # implement this function
 def multiples_of_3_and_5(n):
-    pass
+    sum = 0
+
+    for x in range(n):
+        if x % 3 == 0 or x % 5 == 0:
+            sum += x
+
+    return sum
 
 # (3 points)
 def test2():
@@ -53,7 +66,13 @@ def test2():
 # EXERCISE 3
 #################################################################################
 def integer_right_triangles(p):
-    pass
+    sum = 0
+    for a in range(1, p):
+        for b in range(1, p - a):
+            if math.sqrt(a * a + b * b) == (p - a - b):
+                sum += 1
+    return math.ceil(sum / 2)
+        
 
 def test3():
     tc = unittest.TestCase()
@@ -67,9 +86,30 @@ def test3():
 
 # implement this function
 def gen_pattern(chars):
-    pass
+    length = (len(chars) - 1) * 4 + 1
+    height = len(chars) * 2 - 1
+    revChar = chars[::-1]
+    result = ""
+
+    for x in range(height):
+        index = x
+        if(x > height / 2):
+            index = height - x - 1
+
+        line = revChar[0: index + 1]
+        line += chars[1: index + 1]
+
+        temp = '.'.join(line)
+        line = temp.center(length, '.')
+        
+        result += line + "\n"
+    
+    print(result)
+    return result
 
 def test4():
+    gen_pattern('XYZA')
+
     with captured_output() as (out,err):
         gen_pattern('@')
         self.assertEqual(out.getvalue().strip(), '@')
