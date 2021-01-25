@@ -22,12 +22,12 @@ def captured_output():
 #################################################################################
 
 # implement this function
-def is_perfect(n):    
+def is_perfect(n):
     sum = 0
 
     for x in range(1, n):
         if n % x == 0:
-            sum += x    
+            sum += x
 
     return sum == n
 
@@ -72,7 +72,7 @@ def integer_right_triangles(p):
             if math.sqrt(a * a + b * b) == (p - a - b):
                 sum += 1
     return math.ceil(sum / 2)
-        
+
 
 def test3():
     tc = unittest.TestCase()
@@ -101,38 +101,38 @@ def gen_pattern(chars):
 
         temp = '.'.join(line)
         line = temp.center(length, '.')
-        
+
         result += line + "\n"
-    
+
     print(result)
     return result
 
 def test4():
-    gen_pattern('XYZA')
-
+    tc = unittest.TestCase()
     with captured_output() as (out,err):
         gen_pattern('@')
-        self.assertEqual(out.getvalue().strip(), '@')
+        tc.assertEqual(out.getvalue().strip(), '@')
     with captured_output() as (out,err):
         gen_pattern('@%')
-        self.assertEqual(out.getvalue().strip(),
+        tc.assertEqual(out.getvalue().strip(),
         """
 ..%..
-%.@.%)
+%.@.%
 ..%..
-""")
-        with captured_output() as (out,err):
-            gen_pattern('ABC')
-            self.assertEqual(out.getvalue().strip(), """
+""".strip())
+    with captured_output() as (out,err):
+        gen_pattern('ABC')
+        tc.assertEqual(out.getvalue().strip(),
+        """
 ....C....
 ..C.B.C..
 C.B.A.B.C
 ..C.B.C..
 ....C....
-""")
-        with captured_output() as (out,err):
-            gen_pattern('#####')
-            self.assertEqual(out.getvalue().strip(),
+""".strip())
+    with captured_output() as (out,err):
+        gen_pattern('#####')
+        tc.assertEqual(out.getvalue().strip(),
                              """
 ........#........
 ......#.#.#......
@@ -143,10 +143,10 @@ C.B.A.B.C
 ....#.#.#.#.#....
 ......#.#.#......
 ........#........
-""")
-        with captured_output() as (out,err):
-            gen_pattern('abcdefghijklmnop')
-            self.assertEqual(out.getvalue().strip(),
+""".strip())
+    with captured_output() as (out,err):
+        gen_pattern('abcdefghijklmnop')
+        tc.assertEqual(out.getvalue().strip(),
 """
 ..............................p..............................
 ............................p.o.p............................
@@ -179,7 +179,7 @@ p.o.n.m.l.k.j.i.h.g.f.e.d.c.b.a.b.c.d.e.f.g.h.i.j.k.l.m.n.o.p
 ..........................p.o.n.o.p..........................
 ............................p.o.p............................
 ..............................p..............................
-"""
+""".strip()
 )
 
 #################################################################################
