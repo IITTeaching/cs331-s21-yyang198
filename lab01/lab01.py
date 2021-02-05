@@ -88,7 +88,7 @@ def test3():
 def gen_pattern(chars):
     length = (len(chars) - 1) * 4 + 1
     height = len(chars) * 2 - 1
-    revChar = chars[::-1]
+    chars = chars[::-1]
     result = ""
 
     for x in range(height):
@@ -96,8 +96,10 @@ def gen_pattern(chars):
         if(x > height / 2):
             index = height - x - 1
 
-        line = revChar[0: index + 1]
-        line += chars[1: index + 1]
+        line = chars[0: index + 1]
+        temp = line
+        line = line[:len(line) - 1]
+        line += temp[:: -1]
 
         temp = '.'.join(line)
         line = temp.center(length, '.')
