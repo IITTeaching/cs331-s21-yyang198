@@ -1,5 +1,6 @@
 import urllib.request
 import unittest
+import sys
 from typing import TypeVar, Callable, List
 
 T = TypeVar('T')
@@ -8,6 +9,49 @@ S = TypeVar('S')
 #################################################################################
 # EXERCISE 1
 #################################################################################
+def partition(lst, low, high, compare):
+    i = low - 1
+    pivot = lst[high]
+
+    for x in range(low, high):
+        if compare(lst[x], pivot) == -1:
+            i = i + 1
+            lst[i],lst[x] = lst[x],lst[i]
+    
+    lst[i + 1],lst[high] = lst[high],lst[i + 1]
+    return (i + 1)
+
+def quickSortIterative(lst, low, high, compare):
+    size = high - low + 1
+    stack = [0] * size
+
+    top = -1
+
+    top = top + 1
+    stack[top] = low
+    top = top + 1
+    stack[top] = high
+
+    while top >= 0:
+        high = stack[top]
+        top = top - 1
+        low = stack[top]
+        top = top - 1
+
+        p = partition(lst, low, high, compare)
+
+        if p - 1 > low:
+            top = top + 1
+            stack[top] = low
+            top = top + 1
+            stack[top] = p - 1
+
+        if p + 1 < high:
+            top = top + 1
+            stack[top] = p + 1
+            top = top + 1
+            stack[top] = high
+
 def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
     """
     This method should sort input list lst of elements of some type T.
@@ -17,24 +61,9 @@ def mysort(lst: List[T], compare: Callable[[T, T], int]) -> List[T]:
     right element, 1 if the left is larger than the right, and 0 if the two
     elements are equal.
     """
+    quickSortIterative(lst, 0, len(lst) - 1, compare)
 
-    for x in range(len(lst)):
-        #find minimum
-        min = lst[x]
-        minIndex = x
-        for y in range(x, len(lst)):
-            if compare(min, lst[y]) == 1:
-                min = lst[y]
-                minIndex = y
-        
-        #swap min
-        temp = lst[x]
-        lst[x] = min
-        lst[minIndex] = temp
-    
     return lst
-        
-
 
 def mybinsearch(lst: List[T], elem: S, compare: Callable[[T, S], int]) -> int:
     """
@@ -162,14 +191,27 @@ class PrefixSearcher():
         self.document = document
         self.length = k
         self.prefixes = []
+        
+        for i in range(1, self.length + 1):
+            for x in range(len(self.document)):
+                if x + i < len(self.document):
+                    self.prefixes.append(self.document[x:x + i])
+                else:
+                    self.prefixes.append(self.document[x:])
 
-        for x in range(len(self.document)):
-            if x + self.length < len(self.document):
-                self.prefixes.append(self.document[x:x + self.length])
+        def strcmp(x, y):
+            if(len(x) > len(y)):
+                return 1
+            elif(len(x) < len(y)):
+                return -1
             else:
-                self.prefixes.append(self.document[x:])
+                if(x > y):
+                    return 1
+                elif(x < y):
+                    return -1
+                else:
+                    return 0
 
-        strcmp = lambda x,y:  0 if len(x) == len(y) else (-1 if len(x) < len(y) else 1)
         document = mysort(self.prefixes, strcmp)
         #print(self.document, ":", self.length, ":", self.prefixes)
                 
@@ -180,10 +222,24 @@ class PrefixSearcher():
         length up to n). If q is longer than n, then raise an
         Exception.
         """
+
         if len(q) > self.length:
             raise Exception("Inputted string length is above the maximum length")
-        else:
-            return q in self.document
+        else:       
+            def strcmp(x, y):
+                if(len(x) > len(y)):
+                    return 1
+                elif(len(x) < len(y)):
+                    return -1
+                else:
+                    if(x > y):
+                        return 1
+                    elif(x < y):
+                        return -1
+                    else:
+                        return 0
+
+            return mybinsearch(self.prefixes, q, strcmp) != -1
 
 # 30 Points
 def test2():
@@ -220,29 +276,66 @@ def test2_2():
 # EXERCISE 3
 #################################################################################
 class SuffixArray():
-    suffixes = []
     document = ""
+    sa = []
 
     def __init__(self, document: str):
         """
         Creates a suffix array for document (a string).
         """
+        self.sa  = []
         self.document = document
 
         for x in range(len(document)):
-            self.suffixes.append(document[x:])
+            self.sa.append(x)
+        
+        def strcmp(x, y):
+            x_suffix = document[x:]
+            y_suffix = document[y:]
+            if(x_suffix > y_suffix):
+                return 1
+            elif(x_suffix < y_suffix):
+                return -1
+            else:
+                return 0
 
+        sa = mysort(self.sa, strcmp)
 
     def positions(self, searchstr: str):
         """
         Returns all the positions of searchstr in the documented indexed by the suffix array.
         """
-        pass
+        results = []
+
+        def strcmp(x, y):
+            x_suffix = self.document[x:]
+
+            if(y == x_suffix[:len(y)]):
+                return 0
+            elif(x_suffix > y):
+                return 1
+            elif(x_suffix < y):
+                return -1
+
+        results.append(mybinsearch(self.sa, searchstr, strcmp))
+
+        return results
 
     def contains(self, searchstr: str):
         """
-        Returns true of searchstr is coontained in document.
-        """    
+        Returns true of searchstr is contained in document.
+        """
+        def strcmp(x, y):
+            x_suffix = self.document[x:]
+
+            if(y == x_suffix[:len(y)]):
+                return 0
+            elif(x_suffix > y):
+                return 1
+            elif(x_suffix < y):
+                return -1
+
+        return mybinsearch(self.sa, searchstr, strcmp) != -1  
 
 
 # 40 Points
