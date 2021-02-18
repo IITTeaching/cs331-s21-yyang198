@@ -192,12 +192,11 @@ class PrefixSearcher():
         self.length = k
         self.prefixes = []
         
-        for i in range(1, self.length + 1):
-            for x in range(len(self.document)):
-                if x + i < len(self.document):
-                    self.prefixes.append(self.document[x:x + i])
-                else:
-                    self.prefixes.append(self.document[x:])
+        for x in range(len(self.document)):
+            if x + k < len(self.document):
+                self.prefixes.append(self.document[x:x + k])
+            else:
+                self.prefixes.append(self.document[x:])
 
         def strcmp(x, y):
             if(len(x) > len(y)):
@@ -227,7 +226,9 @@ class PrefixSearcher():
             raise Exception("Inputted string length is above the maximum length")
         else:       
             def strcmp(x, y):
-                if(len(x) > len(y)):
+                if(x[:len(y)] == y):
+                    return 0
+                elif(len(x) > len(y)):
                     return 1
                 elif(len(x) < len(y)):
                     return -1
