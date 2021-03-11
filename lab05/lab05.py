@@ -1,5 +1,6 @@
-from unittest import TestCase
 import random
+from unittest import TestCase
+
 
 ################################################################################
 # Linked list class you should implement
@@ -756,6 +757,7 @@ def test_reverse():
 ################################################################################
 # MAIN
 def main():
+<<<<<<< HEAD
     test_subscript_access()
     say_success()
     test_custor_based_access()
@@ -772,6 +774,19 @@ def main():
     say_success()
     test_reverse()
     say_success()
+=======
+    for t in [test_subscript_access,
+              test_custor_based_access,
+              test_stringification,
+              test_single_element_manipulation,
+              test_predicates,
+              test_queries,
+              test_bulk_operations,
+              test_iteration,
+              test_reverse]:
+         t()
+         say_success()
+>>>>>>> 510e22a975f6dab2cb5e6d567c1e36a37e3e9033
 
 if __name__ == '__main__':
     main()
