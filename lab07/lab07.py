@@ -14,18 +14,30 @@ class ExtensibleHashTable:
 
     def find_bucket(self, key):
         # BEGIN_SOLUTION
+        pass
         # END_SOLUTION
 
     def __getitem__(self,  key):
         # BEGIN_SOLUTION
+        if key > self.n_buckets or key < 0 or self.buckets[key] is None:
+            raise KeyError
+
+        return self.buckets[key]
         # END_SOLUTION
 
     def __setitem__(self, key, value):
         # BEGIN_SOLUTION
+        if self.buckets[key] is None:
+            self.nitems += 1
+
+        self.buckets[key] = value
         # END_SOLUTION
 
     def __delitem__(self, key):
         # BEGIN SOLUTION
+        if self.buckets[key]:
+            self.nitems -= 1
+            self.buckets[key] = None
         # END SOLUTION
 
     def __contains__(self, key):
@@ -43,6 +55,7 @@ class ExtensibleHashTable:
 
     def __iter__(self):
         ### BEGIN SOLUTION
+        pass
         ### END SOLUTION
 
     def keys(self):
@@ -50,10 +63,13 @@ class ExtensibleHashTable:
 
     def values(self):
         ### BEGIN SOLUTION
+        pass
         ### END SOLUTION
 
     def items(self):
         ### BEGIN SOLUTION
+        n = 0
+        pass
         ### END SOLUTION
 
     def __str__(self):
@@ -108,6 +124,10 @@ def test_iteration():
 
     for k, v in entries:
         h[k] = v
+
+    print('ARRY', entries)
+    print()
+    print('HASH', h)
 
     for k, v in entries:
         tc.assertEqual(h[k], v)
@@ -184,8 +204,8 @@ def say_success():
 ################################################################################
 def main():
     for t in [test_insert,
-              test_iteration,
               test_getitem,
+              test_iteration,
               test_modification,
               test_deletion,
               test_extension]:
