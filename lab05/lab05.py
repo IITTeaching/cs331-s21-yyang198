@@ -74,7 +74,7 @@ class LinkedList:
         if idx >= self.length:
             raise IndexError
 
-        idx = self._normalize_idx(idx) 
+        idx = self._normalize_idx(idx)
         cur = self.head.next
         for x in range(idx):
             cur = cur.next
@@ -209,7 +209,7 @@ class LinkedList:
             self.append(value)
             self.length += 1
             return
-        
+
         cur = self.head.next
         for x in range(idx):
             cur = cur.next
@@ -250,7 +250,7 @@ class LinkedList:
             if cur.val == value:
                 cur.next.prior = cur.prior
                 cur.prior.next = cur.next
-                
+
                 self.length -= 1
                 return
 
@@ -329,7 +329,7 @@ class LinkedList:
         cur = self.head
         for x in range(i):
             cur = cur.next
-        
+
         index = i - 1
         for x in range(j - i):
             cur = cur.next
@@ -757,24 +757,6 @@ def test_reverse():
 ################################################################################
 # MAIN
 def main():
-<<<<<<< HEAD
-    test_subscript_access()
-    say_success()
-    test_custor_based_access()
-    say_success()
-    test_stringification()
-    say_success()
-    test_single_element_manipulation()
-    say_success()
-    test_predicates()
-    say_success()
-    test_bulk_operations()
-    say_success()
-    test_iteration()
-    say_success()
-    test_reverse()
-    say_success()
-=======
     for t in [test_subscript_access,
               test_custor_based_access,
               test_stringification,
@@ -786,7 +768,6 @@ def main():
               test_reverse]:
          t()
          say_success()
->>>>>>> 510e22a975f6dab2cb5e6d567c1e36a37e3e9033
 
 if __name__ == '__main__':
     main()
