@@ -327,7 +327,7 @@ class LinkedList:
             j = self.length
 
         if j < 0:
-                j = self.length + j
+            j = self.length + j
 
         cur = self.head
         for x in range(i):
