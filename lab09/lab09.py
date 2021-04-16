@@ -51,6 +51,16 @@ class HBStree:
         KeyError, if key does not exist.
         """
         # BEGIN SOLUTION
+        cur = self.root_versions[-1]
+        while cur:
+            if cur.val == key:
+                return cur
+            elif cur.val > key:
+                cur = cur.left
+            else:
+                cur = cur.right
+
+        raise KeyError
         # END SOLUTION
 
     def __contains__(self, el):
@@ -58,6 +68,16 @@ class HBStree:
         Return True if el exists in the current version of the tree.
         """
         # BEGIN SOLUTION
+        cur = self.root_versions[-1]
+        while cur:
+            if cur.val == el:
+                return True
+            elif cur.val > el:
+                cur = cur.left
+            else:
+                cur = cur.right
+
+        return False
         # END SOLUTION
 
     def insert(self,key):
@@ -67,11 +87,127 @@ class HBStree:
         from creating a new version.
         """
         # BEGIN SOLUTION
+        # reach the spot to append the new node, and record its path
+        cur = self.root_versions[-1] 
+        path = []
+        pathNodes = []
+        while cur:
+            pathNodes.append(cur)
+            if cur.val == key:
+                return
+            elif cur.val > key:
+                cur = cur.left
+                path.append('l')
+            else:
+                cur = cur.right
+                path.append('r')
+
+        # start with a new root node and reconstruct the path with the new node
+        newNode = self.INode(key, None, None)
+        path.reverse()
+        pathNodes.reverse()
+
+        for x in range(len(path)):
+            if path[x] == 'l':
+                newNode = self.INode(pathNodes[x].val, newNode, pathNodes[x].right)
+            else:
+                newNode = self.INode(pathNodes[x].val, pathNodes[x].left, newNode)
+        self.root_versions.append(newNode)
         # END SOLUTION
 
     def delete(self,key):
         """Delete key from the tree, creating a new version of the tree. If key does not exist in the current version of the tree, then do nothing and refrain from creating a new version."""
         # BEGIN SOLUTION
+        # find node to be deleted (curnode will be node to be removed, pathNodes[-1] will be parent node)
+        cur = self.root_versions[-1] 
+        path = []
+        pathNodes = []
+        while cur:
+            pathNodes.append(cur)
+            if cur.val == key:
+                break;
+            elif cur.val > key:
+                cur = cur.left
+                path.append('l')
+            else:
+                cur = cur.right
+                path.append('r')
+        else:
+            # does not exist
+            return
+
+        # if node is leaf
+        if cur.left is None and cur.right is None:
+            # if node is last element
+            if cur.val == self.root_versions[-1].val:
+                self.root_versions.append(None)
+
+            # if node is not last element
+            else:
+                path.reverse()
+                pathNodes.reverse()
+                newNode = None
+
+                for x in range(0, len(path)):
+                    if path[x] == 'l':
+                        newNode = self.INode(pathNodes[x + 1].val, newNode, pathNodes[x + 1].right)
+                    else:
+                        newNode = self.INode(pathNodes[x + 1].val, pathNodes[x + 1].left, newNode)
+                self.root_versions.append(newNode)
+
+        # if node has one child
+        elif cur.left is None:
+            path.reverse()
+            pathNodes.reverse()
+            newNode = self.INode(cur.right.val, cur.right.left, cur.right.right)
+
+            for x in range(0, len(path)):
+                if path[x] == 'l':
+                    newNode = self.INode(pathNodes[x + 1].val, newNode, pathNodes[x + 1].right)
+                else:
+                    newNode = self.INode(pathNodes[x + 1].val, pathNodes[x + 1].left, newNode)
+            self.root_versions.append(newNode)
+
+        elif cur.right is None:
+            path.reverse()
+            pathNodes.reverse()
+            newNode = self.INode(cur.left.val, cur.left.left, cur.left.right)
+
+            for x in range(0, len(path)):
+                if path[x] == 'l':
+                    newNode = self.INode(pathNodes[x + 1].val, newNode, pathNodes[x + 1].right)
+                else:
+                    newNode = self.INode(pathNodes[x + 1].val, pathNodes[x + 1].left, newNode)
+            self.root_versions.append(newNode)
+
+        # if node has two children
+        else:
+            # get biggest element of left subtree
+            steps = 0
+            largest = cur.left
+            largestNodes = []
+            while largest.right:
+                largestNodes.append(largest)
+                largest = largest.right
+                steps += 1
+            
+            # replace cur with largest
+            subtree = None
+            for x in range(steps):
+                subtree = self.INode(largestNodes[x].val, largestNodes[x].left, subtree)
+
+            newNode = self.INode(largest.val, subtree, cur.right)
+
+            # replace the rest of the tree
+            path.reverse()
+            pathNodes.reverse()
+
+            for x in range(0, len(path)):
+                if path[x] == 'l':
+                    newNode = self.INode(pathNodes[x + 1].val, newNode, pathNodes[x + 1].right)
+                else:
+                    newNode = self.INode(pathNodes[x + 1].val, pathNodes[x + 1].left, newNode)
+            self.root_versions.append(newNode)
         # END SOLUTION
 
     @staticmethod
@@ -143,6 +279,17 @@ class HBStree:
         if timetravel < 0 or timetravel >= len(self.root_versions):
             raise IndexError(f"valid versions for time travel are 0 to {len(self.root_versions) -1}, but was {timetravel}")
         # BEGIN SOLUTION
+        cur = self.root_versions[-1 - timetravel]
+
+        def inorder(node):
+            if node:
+                yield from inorder(node.left)
+                yield node.val
+                yield from inorder(node.right)
+            else:
+                return
+
+        yield from inorder(cur)
         # END SOLUTION
 
     @staticmethod
