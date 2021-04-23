@@ -1,0 +1,1 @@
+    lst = padding(text.split()[0:5])
