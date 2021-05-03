@@ -15,7 +15,7 @@ def padding(lst):
         lst[x] = ''.join(c for c in lst[x] if ord(c) < 128)
 
     for x in range(len(lst)):
-        while len(lst[x]) < max_len: 
+        while len(lst[x]) < max_len:
             lst[x] += " "
 
     return lst
